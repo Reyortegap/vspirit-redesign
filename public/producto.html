@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Producto SpiritBeach — trajes de baño sostenibles de PET reciclado. Pide tu talla por WhatsApp." />
+  <meta name="theme-color" content="#2e3d1b" />
+  <title>Producto · SpiritBeach</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Montserrat:wght@300;400;500&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css?v=9" />
+</head>
+<body>
+
+  <div class="announce">Envíos a toda Venezuela<span>·</span>PET reciclado · 0% agua<span>·</span>Pedidos por WhatsApp</div>
+
+  <header>
+    <nav class="nav">
+      <div class="nav-links">
+        <a href="/tienda">Tienda</a>
+        <a href="/bikinis">Bikinis</a>
+        <a href="/enterizos">Enterizos</a>
+      </div>
+      <a class="brand" href="/">
+        <img class="brand-logo" src="/logo-cream.svg" alt="Spirit Beach" />
+      </a>
+      <div class="nav-right">
+        <div class="nav-links">
+          <a href="/salidas-de-playa">Salidas</a>
+          <a href="/nosotros">Nosotros</a>
+        </div>
+        <a href="/contacto" aria-label="Contacto"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M21 12a9 9 0 1 1-4.2-7.6"/><path d="M21 4l-9 9-2.5-2.5"/></svg></a>
+        <a href="/tienda" aria-label="Bolsa"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M6 8h12l-1 13H7L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg></a>
+        <button class="menu-btn" aria-label="Menú"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+      </div>
+    </nav>
+    <div class="mobile-menu">
+      <a href="/tienda">Tienda</a>
+      <a href="/bikinis">Bikinis</a>
+      <a href="/enterizos">Enterizos</a>
+      <a href="/salidas-de-playa">Salidas de playa</a>
+      <a href="/nosotros">Nosotros</a>
+      <a href="/contacto">Contacto</a>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div class="crumbs" id="pd-crumbs"><a href="/">Inicio</a> / <a href="/tienda">Tienda</a></div>
+    <div class="pd" id="pd">
+      <div class="ph"><img id="pd-img" src="" alt="" /></div>
+      <div>
+        <h1 id="pd-name"></h1>
+        <div class="price" id="pd-price"></div>
+        <div class="colors" id="pd-colors"></div>
+        <p class="desc" id="pd-desc"></p>
+        <div class="opt-label">Talla</div>
+        <div class="sizes" id="pd-sizes"></div>
+        <div class="opt-label">Cantidad</div>
+        <div class="qty" id="pd-qty">
+          <button aria-label="Menos">−</button><span>1</span><button aria-label="Más">+</button>
+        </div>
+        <div class="pd-actions">
+          <button class="btn btn-olive" id="pd-add">Añadir al carrito</button>
+          <a class="btn btn-pink" id="pd-wa" target="_blank" rel="noopener">Pedir directo</a>
+        </div>
+        <div class="pd-meta">
+          <div class="row"><svg viewBox="0 0 24 24"><path d="M3 7h13v10H3zM16 10h3l2 3v4h-5"/><circle cx="7" cy="17" r="1.6"/><circle cx="17.5" cy="17" r="1.6"/></svg>Envío nacional coordinado por WhatsApp</div>
+          <div class="row"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 14-5M20 12a8 8 0 0 1-14 5"/><path d="M18 3v4h-4M6 21v-4h4"/></svg>Cambios simples hasta 7 días</div>
+          <div class="row"><svg viewBox="0 0 24 24"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/><circle cx="12" cy="12" r="4"/></svg>Hilos de PET reciclado · estampado con 0% de agua</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-head" style="margin-top:20px">
+      <div>
+        <div class="kicker">Combínalo con</div>
+        <h2>También te puede gustar</h2>
+      </div>
+    </div>
+    <div class="grid-4" id="pd-related" style="padding-bottom:96px"></div>
+  </div>
+
+  <footer>
+    <div class="foot">
+      <div>
+        <a class="brand" href="/">
+          <img class="brand-logo brand-logo-lg" src="/logo-cream.svg" alt="Spirit Beach" />
+        </a>
+        <p>Honra el mar a través de lo que vistes para entrar en él. Trajes de baño y ropa de playa con actitud, hechos para brillar bajo el sol.</p>
+      </div>
+      <div>
+        <h4>Tienda</h4>
+        <ul>
+          <li><a href="/tienda">Todo el catálogo</a></li>
+          <li><a href="/bikinis">Bikinis</a></li>
+          <li><a href="/enterizos">Enterizos</a></li>
+          <li><a href="/salidas-de-playa">Salidas de playa</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Ayuda</h4>
+        <ul>
+          <li><a href="/contacto#tallas">Guía de tallas</a></li>
+          <li><a href="/contacto#cambios">Cambios y devoluciones</a></li>
+          <li><a href="/nosotros">Nosotros</a></li>
+          <li><a href="/contacto">Contacto</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contáctanos</h4>
+        <ul>
+          <li><a href="https://wa.me/584246535755">WhatsApp +58 424-653-5755</a></li>
+          <li><a href="https://instagram.com/vspiritbeach" target="_blank" rel="noopener">@vspiritbeach</a></li>
+          <li><a href="mailto:hola@spiritbeach.com">hola@spiritbeach.com</a></li>
+          <li><a href="/contacto">Maracaibo, Zulia</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-word">SpiritBeach</div>
+    <div class="foot-base">
+      <span>© 2026 SpiritBeach. Todos los derechos reservados.</span>
+      <span>Hecho con el mar en mente.</span>
+    </div>
+  </footer>
+
+  <a class="wa" href="https://wa.me/584246535755" aria-label="Escríbenos por WhatsApp">
+    <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.2 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-1.7 0-.4-.1-.9-.3-1.6-.6-2.8-1.2-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.4l.9 2.1c.1.2.1.4 0 .6l-.4.6-.5.5c-.1.1-.3.3-.1.6.1.3.7 1.1 1.5 1.8 1 .9 1.8 1.2 2.1 1.3.3.1.4.1.6-.1l.9-1c.2-.3.4-.2.7-.1l2 1c.3.1.5.2.6.3 0 .1 0 .7-.2 1.1z"/></svg>
+  </a>
+
+  <script src="/products.js"></script>
+  <script src="/store.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (window.SBReady) await window.SBReady;
+      const slug = new URLSearchParams(location.search).get('p');
+      const p = PRODUCTS.find((x) => x.slug === slug);
+      if (!p) { location.replace('/tienda'); return; }
+
+      const DESCS = {
+        bikinis: 'Bikini de dos piezas con print exclusivo de la casa. Tejido elástico de compresión suave que se queda en su lugar, forro completo y tiras ajustables.',
+        enterizos: 'Enterizo de una sola pieza con print exclusivo. Corte que estiliza y celebra tu cuerpo, con soporte suave y espalda pensada para el sol.',
+        salidas: 'Salida de playa ligera para caminar de la arena al atardecer. Pieza artesanal que respira y combina con toda la colección.',
+      };
+
+      document.title = p.name + ' · SpiritBeach';
+      document.getElementById('pd-crumbs').append(' / ' + p.name);
+      const img = document.getElementById('pd-img');
+      img.src = p.image || ('/products/' + p.slug + '.jpg');
+      img.alt = p.name + ' — ' + p.colors;
+      document.getElementById('pd-name').textContent = p.name;
+      document.getElementById('pd-price').textContent = '$' + p.price.toFixed(2);
+      document.getElementById('pd-colors').textContent = p.colors;
+      document.getElementById('pd-desc').textContent = p.desc || (DESCS[p.cat] + ' Confeccionado con hilos de botellas PET recicladas y estampado digital con 0% de agua.');
+
+      let size = p.sizes[0];
+      const sizesBox = document.getElementById('pd-sizes');
+      p.sizes.forEach((s, i) => {
+        const b = document.createElement('button');
+        b.className = 'size-chip' + (i === 0 ? ' active' : '');
+        b.textContent = s;
+        b.addEventListener('click', () => {
+          size = s;
+          sizesBox.querySelectorAll('.size-chip').forEach((x) => x.classList.remove('active'));
+          b.classList.add('active');
+        });
+        sizesBox.appendChild(b);
+      });
+
+      let qty = 1;
+      const qtyBox = document.getElementById('pd-qty');
+      const [minus, num, plus] = [qtyBox.children[0], qtyBox.children[1], qtyBox.children[2]];
+      minus.addEventListener('click', () => { qty = Math.max(1, qty - 1); num.textContent = qty; });
+      plus.addEventListener('click', () => { qty = Math.min(9, qty + 1); num.textContent = qty; });
+
+      document.getElementById('pd-add').addEventListener('click', () => SBStore.add(p.slug, size, qty));
+      const wa = document.getElementById('pd-wa');
+      const waMsg = () => 'https://wa.me/584246535755?text=' + encodeURIComponent('Hola SpiritBeach! Quiero el modelo ' + p.name + ' en talla ' + size + ' (' + qty + ' und). ¿Está disponible?');
+      wa.href = waMsg();
+      [sizesBox, qtyBox].forEach((el) => el.addEventListener('click', () => { wa.href = waMsg(); }));
+
+      // relacionados: misma categoría primero
+      const rel = PRODUCTS.filter((x) => x.slug !== p.slug).sort((a, b) => (b.cat === p.cat) - (a.cat === p.cat)).slice(0, 4);
+      const relBox = document.getElementById('pd-related');
+      rel.forEach((r) => relBox.appendChild(productCard(r)));
+
+      // SEO: JSON-LD Product
+      const ld = document.createElement('script');
+      ld.type = 'application/ld+json';
+      ld.textContent = JSON.stringify({
+        '@context': 'https://schema.org', '@type': 'Product',
+        name: p.name, image: 'https://vspirit-redesign.vercel.app/products/' + p.slug + '.jpg',
+        description: DESCS[p.cat], brand: { '@type': 'Brand', name: 'SpiritBeach' },
+        offers: { '@type': 'Offer', priceCurrency: 'USD', price: p.price, availability: 'https://schema.org/InStock' },
+      });
+      document.head.appendChild(ld);
+    });
+  </script>
+  <script src="/site.js"></script>
+  <script src="/track.js" defer></script>
+</body>
+</html>

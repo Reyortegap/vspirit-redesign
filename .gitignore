@@ -1,0 +1,5 @@
+.DS_Store
+.vercel
+node_modules
+# el kit de entrega contiene la clave del admin — se comparte por WhatsApp, no por repo
+manual/
