@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Montserrat:wght@300;400;500&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/styles.css?v=14" />
+  <link rel="stylesheet" href="/styles.css?v=16" />
 </head>
 <body>
 
@@ -58,40 +58,53 @@
     <div class="wrap">
       <div class="kicker">Tu espacio</div>
       <h1>Mi <em>cuenta.</em></h1>
-      <p>Crea tu cuenta con tu WhatsApp y tu historial de pedidos te seguirá en cualquier dispositivo.</p>
+      <p>Tu perfil, tus pedidos y tus favoritos — donde entres.</p>
     </div>
   </div>
 
   <div class="wrap">
 
-    <!-- SIN SESIÓN: crear cuenta / iniciar sesión -->
-    <div class="acct-grid" id="view-auth" hidden style="margin-top:44px">
-      <div>
-        <div class="kicker">Tu cuenta</div>
-        <h2 id="auth-title">Crea tu <em>cuenta.</em></h2>
-        <p class="acct-note">Con tu cuenta, tu historial de pedidos te sigue en cualquier dispositivo y el checkout se llena solo. Solo necesitas tu WhatsApp y una contraseña.</p>
-        <div class="chips-row" style="margin-top:22px">
-          <button type="button" class="chip-opt active" data-auth="register">Crear cuenta</button>
-          <button type="button" class="chip-opt" data-auth="login">Iniciar sesión</button>
+    <!-- SIN SESIÓN: tarjeta de acceso con foto de marca -->
+    <div id="view-auth" hidden>
+      <div class="auth-shell">
+        <div class="auth-card">
+          <div class="chips-row auth-tabs">
+            <button type="button" class="chip-opt active" data-auth="register">Crear cuenta</button>
+            <button type="button" class="chip-opt" data-auth="login">Iniciar sesión</button>
+          </div>
+          <h2 id="auth-title" style="font-size:34px;margin-top:26px">Crea tu <em>cuenta.</em></h2>
+          <p class="acct-note" style="margin-top:8px">Solo tu WhatsApp y una contraseña. Nada más.</p>
+          <form class="acct-form" id="auth-form" style="max-width:none">
+            <div id="f-nombre"><label for="au-nombre">Nombre y apellido</label><input id="au-nombre" type="text" autocomplete="name" placeholder="Tu nombre" /></div>
+            <div><label for="au-wa">Tu WhatsApp *</label><input id="au-wa" type="tel" autocomplete="tel" inputmode="tel" required placeholder="0412 000 0000" /></div>
+            <div><label for="au-pass">Contraseña *</label><input id="au-pass" type="password" autocomplete="new-password" required minlength="6" placeholder="Mínimo 6 caracteres" /></div>
+            <button class="btn btn-olive btn-block" type="submit" id="auth-btn" style="margin-top:4px">Crear mi cuenta</button>
+            <div class="cup-msg bad" id="auth-err" style="display:none"></div>
+          </form>
         </div>
-        <form class="acct-form" id="auth-form">
-          <div id="f-nombre"><label for="au-nombre">Nombre y apellido</label><input id="au-nombre" type="text" autocomplete="name" placeholder="Tu nombre" /></div>
-          <div><label for="au-wa">Tu WhatsApp *</label><input id="au-wa" type="tel" autocomplete="tel" inputmode="tel" required placeholder="0412 000 0000" /></div>
-          <div><label for="au-pass">Contraseña *</label><input id="au-pass" type="password" autocomplete="new-password" required minlength="6" placeholder="Mínimo 6 caracteres" /></div>
-          <button class="btn btn-olive" type="submit" id="auth-btn">Crear mi cuenta</button>
-          <div class="cup-msg bad" id="auth-err" style="display:none"></div>
-        </form>
+        <div class="auth-ph">
+          <img src="/ig/post-2.jpg" alt="Modelo SpiritBeach junto a la piscina" loading="lazy" />
+          <div class="auth-ph-shade"></div>
+          <img class="auth-mark" src="/logo-cream.svg" alt="Spirit Beach" />
+          <ul class="auth-perks">
+            <li>Tu historial de pedidos en cualquier dispositivo</li>
+            <li>El checkout se llena solo con tus datos</li>
+            <li>Repite tus piezas favoritas en un toque</li>
+          </ul>
+        </div>
       </div>
-      <div>
-        <div class="kicker">En este dispositivo</div>
-        <h2>Pedidos <em>recientes.</em></h2>
-        <p class="acct-note">Hechos desde este navegador. Crea tu cuenta para que el historial completo te acompañe donde entres.</p>
-        <div id="local-orders" style="margin-top:24px"></div>
+
+      <div class="local-block" id="local-block" hidden>
+        <div class="sec-head" style="margin:64px 0 8px">
+          <div><div class="kicker">En este dispositivo</div><h2 style="font-size:30px">Pedidos recientes</h2></div>
+        </div>
+        <p class="acct-note" style="margin-bottom:20px">Hechos desde este navegador. Crea tu cuenta para que el historial completo te acompañe donde entres.</p>
+        <div id="local-orders" class="local-orders-grid"></div>
       </div>
     </div>
 
     <!-- CON SESIÓN: perfil + historial del backend -->
-    <div class="acct-grid" id="view-account" hidden style="margin-top:44px">
+    <div class="acct-grid acct-logged" id="view-account" hidden style="margin-top:44px">
       <div>
         <div class="kicker">Tu perfil</div>
         <h2>Hola, <em id="me-name">·</em></h2>
@@ -242,7 +255,11 @@
       function showAuth() {
         viewAuth.hidden = false;
         viewAcct.hidden = true;
-        renderOrders([...readJ('sb-orders', [])].reverse(), document.getElementById('local-orders'), false);
+        const locals = [...readJ('sb-orders', [])].reverse();
+        if (locals.length) {
+          document.getElementById('local-block').hidden = false;
+          renderOrders(locals, document.getElementById('local-orders'), false);
+        }
       }
 
       if (token()) showAccount(); else showAuth();
