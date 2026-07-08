@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <link rel="icon" type="image/png" href="/favicon.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Tu cuenta SpiritBeach: perfil y el historial de tus pedidos." />
+  <meta name="description" content="Tu cuenta SpiritBeach: inicia sesión para ver tu historial de pedidos en cualquier dispositivo." />
   <meta name="theme-color" content="#2e3d1b" />
   <title>Mi cuenta · SpiritBeach</title>
   <meta property="og:type" content="website" />
@@ -58,25 +58,53 @@
     <div class="wrap">
       <div class="kicker">Tu espacio</div>
       <h1>Mi <em>cuenta.</em></h1>
-      <p>Tu perfil, tus favoritos y el historial de todo lo que has pedido.</p>
+      <p>Crea tu cuenta con tu WhatsApp y tu historial de pedidos te seguirá en cualquier dispositivo.</p>
     </div>
   </div>
 
   <div class="wrap">
-    <div class="acct-grid" style="margin-top:44px">
+
+    <!-- SIN SESIÓN: crear cuenta / iniciar sesión -->
+    <div class="acct-grid" id="view-auth" hidden style="margin-top:44px">
+      <div>
+        <div class="kicker">Tu cuenta</div>
+        <h2 id="auth-title">Crea tu <em>cuenta.</em></h2>
+        <p class="acct-note">Con tu cuenta, tu historial de pedidos te sigue en cualquier dispositivo y el checkout se llena solo. Solo necesitas tu WhatsApp y una contraseña.</p>
+        <div class="chips-row" style="margin-top:22px">
+          <button type="button" class="chip-opt active" data-auth="register">Crear cuenta</button>
+          <button type="button" class="chip-opt" data-auth="login">Iniciar sesión</button>
+        </div>
+        <form class="acct-form" id="auth-form">
+          <div id="f-nombre"><label for="au-nombre">Nombre y apellido</label><input id="au-nombre" type="text" autocomplete="name" placeholder="Tu nombre" /></div>
+          <div><label for="au-wa">Tu WhatsApp *</label><input id="au-wa" type="tel" autocomplete="tel" inputmode="tel" required placeholder="0412 000 0000" /></div>
+          <div><label for="au-pass">Contraseña *</label><input id="au-pass" type="password" autocomplete="new-password" required minlength="6" placeholder="Mínimo 6 caracteres" /></div>
+          <button class="btn btn-olive" type="submit" id="auth-btn">Crear mi cuenta</button>
+          <div class="cup-msg bad" id="auth-err" style="display:none"></div>
+        </form>
+      </div>
+      <div>
+        <div class="kicker">En este dispositivo</div>
+        <h2>Pedidos <em>recientes.</em></h2>
+        <p class="acct-note">Hechos desde este navegador. Crea tu cuenta para que el historial completo te acompañe donde entres.</p>
+        <div id="local-orders" style="margin-top:24px"></div>
+      </div>
+    </div>
+
+    <!-- CON SESIÓN: perfil + historial del backend -->
+    <div class="acct-grid" id="view-account" hidden style="margin-top:44px">
       <div>
         <div class="kicker">Tu perfil</div>
-        <h2>Crea tu <em>cuenta.</em></h2>
-        <p class="acct-note">Guarda tus datos para que el checkout se llene solo y tu historial de pedidos quede en este dispositivo. Sin contraseñas ni correos — tan simple como la tienda.</p>
-        <form class="acct-form" id="acct-form">
-          <div><label for="ac-nombre">Nombre y apellido</label><input id="ac-nombre" type="text" autocomplete="name" placeholder="Tu nombre" /></div>
-          <div><label for="ac-wa">Tu WhatsApp</label><input id="ac-wa" type="tel" autocomplete="tel" inputmode="tel" placeholder="0412 000 0000" /></div>
-          <div><label for="ac-ciudad">Ciudad</label><input id="ac-ciudad" type="text" placeholder="Maracaibo" /></div>
-          <button class="btn btn-olive" type="submit" id="ac-save">Guardar mi cuenta</button>
-          <div class="cup-msg ok" id="ac-ok" style="display:none">✓ Cuenta guardada en este dispositivo</div>
+        <h2>Hola, <em id="me-name">·</em></h2>
+        <p class="acct-note" id="me-phone"></p>
+        <form class="acct-form" id="me-form">
+          <div><label for="me-nombre">Nombre y apellido</label><input id="me-nombre" type="text" autocomplete="name" /></div>
+          <div><label for="me-pass">Nueva contraseña (opcional)</label><input id="me-pass" type="password" autocomplete="new-password" placeholder="Dejar vacío para no cambiarla" /></div>
+          <button class="btn btn-olive" type="submit">Guardar cambios</button>
+          <div class="cup-msg ok" id="me-ok" style="display:none">✓ Guardado</div>
         </form>
         <div class="acct-links">
           <a href="/favoritos" class="sec-link">Ver mis favoritos</a>
+          <button type="button" class="co-back" id="logout" style="margin-left:22px">Cerrar sesión</button>
         </div>
       </div>
       <div>
@@ -85,6 +113,7 @@
         <div id="orders-list" style="margin-top:24px"></div>
       </div>
     </div>
+
     <div style="padding-bottom:96px"></div>
   </div>
 
@@ -141,62 +170,144 @@
     document.addEventListener('DOMContentLoaded', async () => {
       if (window.SBReady) await window.SBReady;
       const readJ = (k, fb) => { try { return JSON.parse(localStorage.getItem(k)) ?? fb; } catch (e) { return fb; } };
-      // perfil
-      const prof = readJ('sb-profile', {});
-      document.getElementById('ac-nombre').value = prof.nombre || '';
-      document.getElementById('ac-wa').value = prof.whatsapp || '';
-      document.getElementById('ac-ciudad').value = prof.ciudad || '';
-      document.getElementById('acct-form').addEventListener('submit', (e) => {
+      const token = () => localStorage.getItem('sb-token');
+      const STATUS = { nuevo: 'Recibido', pagado: 'Pagado', entregado: 'Entregado', cancelado: 'Cancelado' };
+
+      function renderOrders(list, box, withStatus) {
+        box.textContent = '';
+        if (!list.length) {
+          box.innerHTML = '<div class="acct-empty" style="padding:36px 16px"><img src="/lotus-olive.svg" alt="" /><h3 class="serif" style="font-size:23px;margin:10px 0 6px">Sin pedidos todavía</h3><p style="margin-bottom:16px">Cuando pidas, aparecerán aquí.</p><a class="btn btn-olive" href="/tienda">Ir a la tienda</a></div>';
+          return;
+        }
+        list.forEach((o) => {
+          const card = document.createElement('div');
+          card.className = 'order-card';
+          const head = document.createElement('div');
+          head.className = 'oc-head';
+          const id = document.createElement('b');
+          id.textContent = (o.id || '').toString().slice(-8).toUpperCase();
+          const right = document.createElement('span');
+          const st = withStatus && o.status ? (STATUS[o.status] || o.status) + ' · ' : '';
+          right.textContent = st + new Date(o.date).toLocaleDateString('es-VE', { day: 'numeric', month: 'long', year: 'numeric' });
+          head.append(id, right);
+          card.appendChild(head);
+          (o.items || []).forEach((i) => {
+            const line = document.createElement('div');
+            line.className = 'oc-line';
+            const l = document.createElement('span'); l.textContent = i.name + (i.size ? ' · ' + i.size : '') + ' × ' + (i.qty || 1);
+            const r = document.createElement('span'); r.textContent = '$' + ((i.price || 0) * (i.qty || 1)).toFixed(2);
+            line.append(l, r);
+            card.appendChild(line);
+          });
+          const foot = document.createElement('div');
+          foot.className = 'oc-foot';
+          const tot = document.createElement('b');
+          tot.textContent = 'Total $' + (o.total || 0).toFixed(2) + (o.coupon ? ' · Cupón ' + o.coupon : '');
+          const again = document.createElement('button');
+          again.className = 'btn btn-pink';
+          again.style.padding = '10px 20px';
+          again.textContent = 'Volver a pedir';
+          again.addEventListener('click', () => {
+            (o.items || []).forEach((i) => {
+              const p = PRODUCTS.find((x) => x.name === i.name);
+              if (p && window.SBStore) SBStore.add(p.slug, i.size || p.sizes[0], i.qty || 1);
+            });
+          });
+          foot.append(tot, again);
+          card.appendChild(foot);
+          box.appendChild(card);
+        });
+      }
+
+      const viewAuth = document.getElementById('view-auth');
+      const viewAcct = document.getElementById('view-account');
+
+      async function showAccount() {
+        try {
+          const r = await fetch(API + '/api/customer/me', { headers: { Authorization: 'Bearer ' + token() } });
+          if (!r.ok) throw new Error('expired');
+          const d = await r.json();
+          viewAcct.hidden = false;
+          document.getElementById('me-name').textContent = (d.customer.name || 'hola').split(' ')[0] + '.';
+          document.getElementById('me-phone').textContent = 'Cuenta vinculada al WhatsApp ' + d.customer.phone + '. Tus pedidos con ese número aparecen abajo, entres desde donde entres.';
+          document.getElementById('me-nombre').value = d.customer.name || '';
+          localStorage.setItem('sb-profile', JSON.stringify({ nombre: d.customer.name, whatsapp: d.customer.phone }));
+          renderOrders(d.orders, document.getElementById('orders-list'), true);
+        } catch (e) {
+          localStorage.removeItem('sb-token');
+          showAuth();
+        }
+      }
+
+      function showAuth() {
+        viewAuth.hidden = false;
+        viewAcct.hidden = true;
+        renderOrders([...readJ('sb-orders', [])].reverse(), document.getElementById('local-orders'), false);
+      }
+
+      if (token()) showAccount(); else showAuth();
+
+      // tabs crear/entrar
+      let mode = 'register';
+      document.querySelectorAll('[data-auth]').forEach((c) => c.addEventListener('click', () => {
+        mode = c.dataset.auth;
+        document.querySelectorAll('[data-auth]').forEach((x) => x.classList.toggle('active', x === c));
+        document.getElementById('f-nombre').style.display = mode === 'register' ? '' : 'none';
+        document.getElementById('auth-btn').textContent = mode === 'register' ? 'Crear mi cuenta' : 'Entrar';
+        document.getElementById('auth-title').innerHTML = mode === 'register' ? 'Crea tu <em>cuenta.</em>' : 'Inicia <em>sesión.</em>';
+        document.getElementById('au-pass').autocomplete = mode === 'register' ? 'new-password' : 'current-password';
+      }));
+
+      document.getElementById('auth-form').addEventListener('submit', async (e) => {
         e.preventDefault();
-        localStorage.setItem('sb-profile', JSON.stringify({
-          nombre: document.getElementById('ac-nombre').value.trim(),
-          whatsapp: document.getElementById('ac-wa').value.trim(),
-          ciudad: document.getElementById('ac-ciudad').value.trim(),
-        }));
-        document.getElementById('ac-ok').style.display = 'block';
-        setTimeout(() => { document.getElementById('ac-ok').style.display = 'none'; }, 2500);
+        const err = document.getElementById('auth-err');
+        err.style.display = 'none';
+        const btn = document.getElementById('auth-btn');
+        btn.disabled = true; btn.textContent = 'Un momento…';
+        try {
+          const r = await fetch(API + '/api/customer/' + mode, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              phone: document.getElementById('au-wa').value,
+              name: document.getElementById('au-nombre').value,
+              password: document.getElementById('au-pass').value,
+            }),
+          });
+          const d = await r.json();
+          if (!d.ok) throw new Error(d.error || 'No se pudo. Intenta de nuevo.');
+          localStorage.setItem('sb-token', d.token);
+          localStorage.setItem('sb-profile', JSON.stringify({ nombre: d.customer.name, whatsapp: d.customer.phone }));
+          location.reload();
+        } catch (e2) {
+          err.textContent = e2.message;
+          err.style.display = 'block';
+          btn.disabled = false;
+          btn.textContent = mode === 'register' ? 'Crear mi cuenta' : 'Entrar';
+        }
       });
 
-      // historial de pedidos (de este dispositivo)
-      const orders = readJ('sb-orders', []);
-      const box = document.getElementById('orders-list');
-      if (!orders.length) {
-        box.innerHTML = '<div class="acct-empty" style="padding:40px 20px"><img src="/lotus-olive.svg" alt="" /><h3 class="serif" style="font-size:24px;margin:10px 0 6px">Sin pedidos todavía</h3><p style="margin-bottom:18px">Cuando hagas tu primer pedido, aparecerá aquí.</p><a class="btn btn-olive" href="/tienda">Ir a la tienda</a></div>';
-        return;
-      }
-      [...orders].reverse().forEach((o) => {
-        const card = document.createElement('div');
-        card.className = 'order-card';
-        const head = document.createElement('div');
-        head.className = 'oc-head';
-        const id = document.createElement('b'); id.textContent = o.id;
-        const date = document.createElement('span'); date.textContent = new Date(o.date).toLocaleDateString('es-VE', { day: 'numeric', month: 'long', year: 'numeric' });
-        head.append(id, date);
-        card.appendChild(head);
-        (o.items || []).forEach((i) => {
-          const line = document.createElement('div');
-          line.className = 'oc-line';
-          const l = document.createElement('span'); l.textContent = i.name + ' · ' + i.size + ' × ' + i.qty;
-          const r = document.createElement('span'); r.textContent = '$' + (i.price * i.qty).toFixed(2);
-          line.append(l, r);
-          card.appendChild(line);
+      // editar perfil
+      document.getElementById('me-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const body = { name: document.getElementById('me-nombre').value };
+        const pw = document.getElementById('me-pass').value;
+        if (pw) body.password = pw;
+        const r = await fetch(API + '/api/customer/me', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token() },
+          body: JSON.stringify(body),
         });
-        const foot = document.createElement('div');
-        foot.className = 'oc-foot';
-        const tot = document.createElement('b'); tot.textContent = 'Total $' + (o.total || 0).toFixed(2) + (o.coupon ? ' · Cupón ' + o.coupon : '');
-        const again = document.createElement('button');
-        again.className = 'btn btn-pink';
-        again.style.padding = '10px 20px';
-        again.textContent = 'Volver a pedir';
-        again.addEventListener('click', () => {
-          (o.items || []).forEach((i) => {
-            const p = PRODUCTS.find((x) => x.name === i.name);
-            if (p && window.SBStore) SBStore.add(p.slug, i.size, i.qty);
-          });
-        });
-        foot.append(tot, again);
-        card.appendChild(foot);
-        box.appendChild(card);
+        if (r.ok) {
+          document.getElementById('me-ok').style.display = 'block';
+          document.getElementById('me-pass').value = '';
+          setTimeout(() => { document.getElementById('me-ok').style.display = 'none'; }, 2500);
+        }
+      });
+
+      document.getElementById('logout').addEventListener('click', () => {
+        localStorage.removeItem('sb-token');
+        location.reload();
       });
     });
   </script>
