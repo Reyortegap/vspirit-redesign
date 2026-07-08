@@ -4,12 +4,12 @@
   <meta charset="UTF-8" />
   <link rel="icon" type="image/png" href="/favicon.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Toda la tienda SpiritBeach — bikinis, enterizos y salidas de playa sostenibles. Pedidos por WhatsApp, envíos a toda Venezuela." />
+  <meta name="description" content="Tus piezas guardadas de SpiritBeach." />
   <meta name="theme-color" content="#2e3d1b" />
-  <title>Tienda · SpiritBeach</title>
+  <title>Favoritos · SpiritBeach</title>
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="SpiritBeach" />
-  <meta property="og:title" content="Tienda · SpiritBeach" />
+  <meta property="og:title" content="Favoritos · SpiritBeach" />
   <meta property="og:description" content="Bikinis, enterizos y salidas de playa sostenibles. PET reciclado, 0% agua." />
   <meta property="og:image" content="https://vspirit-redesign.vercel.app/ig/post-7.jpg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -24,7 +24,7 @@
   <header>
     <nav class="nav">
       <div class="nav-links">
-        <a href="/tienda" class="active">Tienda</a>
+        <a href="/tienda">Tienda</a>
         <a href="/bikinis">Bikinis</a>
         <a href="/enterizos">Enterizos</a>
       </div>
@@ -56,29 +56,22 @@
 
   <div class="page-hero">
     <div class="wrap">
-      <div class="kicker">Colección VSpirit</div>
-      <h1>Toda la <em>tienda.</em></h1>
-      <p>Encuentra tu pieza perfecta para el sol, la piscina o el próximo viaje a la playa. Cada modelo se pide por WhatsApp.</p>
+      <div class="kicker">Tus piezas guardadas</div>
+      <h1>Mis <em>favoritos.</em></h1>
+      <p>Las piezas que marcaste con el corazón, listas para cuando decidas.</p>
     </div>
   </div>
 
   <div class="wrap">
-    <div class="shop-tools">
-      <div class="filters" id="shop-filters"></div>
-      <div class="search-box">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-        <input type="search" id="shop-search" placeholder="Buscar modelo o color…" aria-label="Buscar producto" />
-      </div>
-      <div class="sort-box">
-        <select id="shop-sort" aria-label="Ordenar productos">
-          <option value="recomendado">Recomendado</option>
-          <option value="precio-asc">Precio: menor a mayor</option>
-          <option value="precio-desc">Precio: mayor a menor</option>
-        </select>
-      </div>
+    <div class="count" id="fav-count" style="margin-top:40px"></div>
+    <div class="grid-4" id="fav-grid" style="padding-bottom:32px"></div>
+    <div class="acct-empty" id="fav-empty" hidden>
+      <img src="/lotus-olive.svg" alt="" />
+      <h2 class="serif">Aún no tienes favoritos</h2>
+      <p>Toca el corazón de cualquier pieza para guardarla aquí.</p>
+      <a class="btn btn-olive" href="/tienda">Explorar la tienda</a>
     </div>
-    <div class="count" id="shop-count"></div>
-    <div class="grid-4" id="shop-grid" style="padding-bottom:96px"></div>
+    <div style="padding-bottom:96px"></div>
   </div>
 
   <footer>
@@ -130,6 +123,26 @@
 
   <script src="/products.js"></script>
   <script src="/store.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (window.SBReady) await window.SBReady;
+      const wish = (() => { try { return JSON.parse(localStorage.getItem('sb-wish')) || []; } catch (e) { return []; } })();
+      const items = PRODUCTS.filter((p) => wish.includes(p.slug));
+      const grid = document.getElementById('fav-grid');
+      const count = document.getElementById('fav-count');
+      if (!items.length) {
+        document.getElementById('fav-empty').hidden = false;
+        count.hidden = true;
+        return;
+      }
+      count.textContent = items.length + (items.length === 1 ? ' pieza guardada' : ' piezas guardadas');
+      items.forEach((p) => grid.appendChild(productCard(p)));
+      // al quitar el corazón, refrescar la página de favoritos
+      grid.addEventListener('click', (e) => {
+        if (e.target.closest('.wish')) setTimeout(() => location.reload(), 350);
+      });
+    });
+  </script>
   <script src="/site.js"></script>
   <script src="/track.js" defer></script>
 </body>

@@ -126,9 +126,11 @@
 
   function updateBadge() {
     const n = cart.reduce((s, i) => s + i.qty, 0);
-    document.querySelectorAll('.bag-badge').forEach((b) => { b.hidden = n === 0; b.textContent = n; });
+    document.querySelectorAll('.bag-badge:not(.fav-badge)').forEach((b) => { b.hidden = n === 0; b.textContent = n; });
     const c = drawer.querySelector('[data-count]');
     if (c) { c.hidden = n === 0; c.textContent = n + (n === 1 ? ' pieza' : ' piezas'); }
+    const w = read(WISH_KEY, []).length;
+    document.querySelectorAll('.fav-badge').forEach((b) => { b.hidden = w === 0; b.textContent = w; });
   }
 
   /* ---------- carrito ---------- */
@@ -276,6 +278,15 @@
     if (e.target.closest('[data-goto-checkout]')) {
       if (!cart.length) { showToast('Tu carrito está vacío'); return; }
       renderSummary();
+      // autollenar con el perfil de la cuenta (si existe)
+      const prof = read('sb-profile', {});
+      const form = drawer.querySelector('.co-form');
+      if (form) {
+        const n = form.querySelector('[name=nombre]');
+        const w = form.querySelector('[name=whatsapp]');
+        if (n && !n.value && prof.nombre) n.value = prof.nombre;
+        if (w && !w.value && prof.whatsapp) w.value = prof.whatsapp;
+      }
       setView('checkout');
       return;
     }
@@ -373,6 +384,11 @@
       total: totalNet(),
     });
     write(ORD_KEY, orders);
+    // la cuenta se crea sola: guardar el perfil con los datos del checkout
+    if (nombre || whatsapp) {
+      const prof = read('sb-profile', {});
+      write('sb-profile', { ...prof, nombre: nombre || prof.nombre || '', whatsapp: whatsapp || prof.whatsapp || '' });
+    }
     // registrar el pedido en el backend (dashboard de la tienda)
     try {
       fetch(API + '/api/orders', {
@@ -412,6 +428,7 @@
     const on = !w.includes(slug);
     w = on ? [...w, slug] : w.filter((s) => s !== slug);
     write(WISH_KEY, w);
+    updateBadge();
     showToast(on ? 'Guardado en favoritos' : 'Quitado de favoritos');
     return on;
   }

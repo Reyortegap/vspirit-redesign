@@ -949,3 +949,29 @@ header.header-scrolled{box-shadow:0 8px 28px rgba(43,42,24,.22)}
 .hero-shade{background:
   linear-gradient(to right, rgba(43,42,24,.5) 0%, rgba(43,42,24,.24) 32%, rgba(43,42,24,0) 60%),
   linear-gradient(to top, rgba(43,42,24,.55) 0%, rgba(43,42,24,.06) 45%, rgba(43,42,24,.1) 100%)}
+
+/* ============ FAVORITOS + MI CUENTA ============ */
+.fav-link{position:relative}
+.fav-badge{background:var(--olive-deep);color:var(--cream)}
+.acct-grid{display:grid;grid-template-columns:1fr 1.1fr;gap:64px;align-items:start}
+.acct-note{font-size:14.5px;line-height:1.7;color:rgba(43,42,24,.7);max-width:420px;margin-top:14px}
+.acct-form{display:flex;flex-direction:column;gap:14px;margin-top:24px;max-width:420px}
+.acct-form label{font-size:11px;letter-spacing:.2em;text-transform:uppercase;font-weight:500;color:var(--olive);display:block;margin-bottom:6px}
+.acct-form input{
+  width:100%;padding:12px 14px;border:1px solid rgba(43,42,24,.25);border-radius:10px;
+  font-family:'Poppins',sans-serif;font-size:14px;font-weight:300;background:transparent;color:var(--ink);
+}
+.acct-form input:focus{outline:none;border-color:var(--olive);box-shadow:0 0 0 3px rgba(98,94,60,.14)}
+.acct-form .btn{align-self:flex-start;margin-top:6px}
+.acct-links{margin-top:26px}
+.order-card{background:#fff;border:1px solid rgba(43,42,24,.16);border-radius:16px;padding:18px 22px;margin-bottom:16px}
+.oc-head{display:flex;justify-content:space-between;gap:12px;font-size:12.5px;color:rgba(43,42,24,.55);margin-bottom:10px}
+.oc-head b{font-weight:500;color:var(--ink);letter-spacing:.04em}
+.oc-line{display:flex;justify-content:space-between;gap:12px;font-size:14px;padding:7px 0;border-bottom:1px dashed rgba(43,42,24,.14)}
+.oc-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap}
+.oc-foot b{font-family:'Instrument Serif',serif;font-weight:400;font-size:19px}
+.acct-empty{text-align:center;padding:70px 20px;color:rgba(43,42,24,.6)}
+.acct-empty img{width:46px;margin:0 auto 14px;opacity:.5}
+.acct-empty h2{margin-bottom:8px}
+.acct-empty .btn{margin-top:20px}
+@media (max-width:900px){.acct-grid{grid-template-columns:1fr;gap:48px}}

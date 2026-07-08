@@ -4,12 +4,12 @@
   <meta charset="UTF-8" />
   <link rel="icon" type="image/png" href="/favicon.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Toda la tienda SpiritBeach — bikinis, enterizos y salidas de playa sostenibles. Pedidos por WhatsApp, envíos a toda Venezuela." />
+  <meta name="description" content="Tu cuenta SpiritBeach: perfil y el historial de tus pedidos." />
   <meta name="theme-color" content="#2e3d1b" />
-  <title>Tienda · SpiritBeach</title>
+  <title>Mi cuenta · SpiritBeach</title>
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="SpiritBeach" />
-  <meta property="og:title" content="Tienda · SpiritBeach" />
+  <meta property="og:title" content="Mi cuenta · SpiritBeach" />
   <meta property="og:description" content="Bikinis, enterizos y salidas de playa sostenibles. PET reciclado, 0% agua." />
   <meta property="og:image" content="https://vspirit-redesign.vercel.app/ig/post-7.jpg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -24,7 +24,7 @@
   <header>
     <nav class="nav">
       <div class="nav-links">
-        <a href="/tienda" class="active">Tienda</a>
+        <a href="/tienda">Tienda</a>
         <a href="/bikinis">Bikinis</a>
         <a href="/enterizos">Enterizos</a>
       </div>
@@ -56,29 +56,36 @@
 
   <div class="page-hero">
     <div class="wrap">
-      <div class="kicker">Colección VSpirit</div>
-      <h1>Toda la <em>tienda.</em></h1>
-      <p>Encuentra tu pieza perfecta para el sol, la piscina o el próximo viaje a la playa. Cada modelo se pide por WhatsApp.</p>
+      <div class="kicker">Tu espacio</div>
+      <h1>Mi <em>cuenta.</em></h1>
+      <p>Tu perfil, tus favoritos y el historial de todo lo que has pedido.</p>
     </div>
   </div>
 
   <div class="wrap">
-    <div class="shop-tools">
-      <div class="filters" id="shop-filters"></div>
-      <div class="search-box">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-        <input type="search" id="shop-search" placeholder="Buscar modelo o color…" aria-label="Buscar producto" />
+    <div class="acct-grid" style="margin-top:44px">
+      <div>
+        <div class="kicker">Tu perfil</div>
+        <h2>Crea tu <em>cuenta.</em></h2>
+        <p class="acct-note">Guarda tus datos para que el checkout se llene solo y tu historial de pedidos quede en este dispositivo. Sin contraseñas ni correos — tan simple como la tienda.</p>
+        <form class="acct-form" id="acct-form">
+          <div><label for="ac-nombre">Nombre y apellido</label><input id="ac-nombre" type="text" autocomplete="name" placeholder="Tu nombre" /></div>
+          <div><label for="ac-wa">Tu WhatsApp</label><input id="ac-wa" type="tel" autocomplete="tel" inputmode="tel" placeholder="0412 000 0000" /></div>
+          <div><label for="ac-ciudad">Ciudad</label><input id="ac-ciudad" type="text" placeholder="Maracaibo" /></div>
+          <button class="btn btn-olive" type="submit" id="ac-save">Guardar mi cuenta</button>
+          <div class="cup-msg ok" id="ac-ok" style="display:none">✓ Cuenta guardada en este dispositivo</div>
+        </form>
+        <div class="acct-links">
+          <a href="/favoritos" class="sec-link">Ver mis favoritos</a>
+        </div>
       </div>
-      <div class="sort-box">
-        <select id="shop-sort" aria-label="Ordenar productos">
-          <option value="recomendado">Recomendado</option>
-          <option value="precio-asc">Precio: menor a mayor</option>
-          <option value="precio-desc">Precio: mayor a menor</option>
-        </select>
+      <div>
+        <div class="kicker">Tus compras</div>
+        <h2>Historial de <em>pedidos.</em></h2>
+        <div id="orders-list" style="margin-top:24px"></div>
       </div>
     </div>
-    <div class="count" id="shop-count"></div>
-    <div class="grid-4" id="shop-grid" style="padding-bottom:96px"></div>
+    <div style="padding-bottom:96px"></div>
   </div>
 
   <footer>
@@ -130,6 +137,69 @@
 
   <script src="/products.js"></script>
   <script src="/store.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (window.SBReady) await window.SBReady;
+      const readJ = (k, fb) => { try { return JSON.parse(localStorage.getItem(k)) ?? fb; } catch (e) { return fb; } };
+      // perfil
+      const prof = readJ('sb-profile', {});
+      document.getElementById('ac-nombre').value = prof.nombre || '';
+      document.getElementById('ac-wa').value = prof.whatsapp || '';
+      document.getElementById('ac-ciudad').value = prof.ciudad || '';
+      document.getElementById('acct-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        localStorage.setItem('sb-profile', JSON.stringify({
+          nombre: document.getElementById('ac-nombre').value.trim(),
+          whatsapp: document.getElementById('ac-wa').value.trim(),
+          ciudad: document.getElementById('ac-ciudad').value.trim(),
+        }));
+        document.getElementById('ac-ok').style.display = 'block';
+        setTimeout(() => { document.getElementById('ac-ok').style.display = 'none'; }, 2500);
+      });
+
+      // historial de pedidos (de este dispositivo)
+      const orders = readJ('sb-orders', []);
+      const box = document.getElementById('orders-list');
+      if (!orders.length) {
+        box.innerHTML = '<div class="acct-empty" style="padding:40px 20px"><img src="/lotus-olive.svg" alt="" /><h3 class="serif" style="font-size:24px;margin:10px 0 6px">Sin pedidos todavía</h3><p style="margin-bottom:18px">Cuando hagas tu primer pedido, aparecerá aquí.</p><a class="btn btn-olive" href="/tienda">Ir a la tienda</a></div>';
+        return;
+      }
+      [...orders].reverse().forEach((o) => {
+        const card = document.createElement('div');
+        card.className = 'order-card';
+        const head = document.createElement('div');
+        head.className = 'oc-head';
+        const id = document.createElement('b'); id.textContent = o.id;
+        const date = document.createElement('span'); date.textContent = new Date(o.date).toLocaleDateString('es-VE', { day: 'numeric', month: 'long', year: 'numeric' });
+        head.append(id, date);
+        card.appendChild(head);
+        (o.items || []).forEach((i) => {
+          const line = document.createElement('div');
+          line.className = 'oc-line';
+          const l = document.createElement('span'); l.textContent = i.name + ' · ' + i.size + ' × ' + i.qty;
+          const r = document.createElement('span'); r.textContent = '$' + (i.price * i.qty).toFixed(2);
+          line.append(l, r);
+          card.appendChild(line);
+        });
+        const foot = document.createElement('div');
+        foot.className = 'oc-foot';
+        const tot = document.createElement('b'); tot.textContent = 'Total $' + (o.total || 0).toFixed(2) + (o.coupon ? ' · Cupón ' + o.coupon : '');
+        const again = document.createElement('button');
+        again.className = 'btn btn-pink';
+        again.style.padding = '10px 20px';
+        again.textContent = 'Volver a pedir';
+        again.addEventListener('click', () => {
+          (o.items || []).forEach((i) => {
+            const p = PRODUCTS.find((x) => x.name === i.name);
+            if (p && window.SBStore) SBStore.add(p.slug, i.size, i.qty);
+          });
+        });
+        foot.append(tot, again);
+        card.appendChild(foot);
+        box.appendChild(card);
+      });
+    });
+  </script>
   <script src="/site.js"></script>
   <script src="/track.js" defer></script>
 </body>
