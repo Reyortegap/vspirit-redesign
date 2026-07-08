@@ -944,3 +944,8 @@ header.header-scrolled{box-shadow:0 8px 28px rgba(43,42,24,.22)}
 @media (min-width:768px){
   .hero img{object-position:center 30%}
 }
+
+/* hero: degradado lateral sutil (izquierda oscura → transparente) para contraste del texto */
+.hero-shade{background:
+  linear-gradient(to right, rgba(43,42,24,.5) 0%, rgba(43,42,24,.24) 32%, rgba(43,42,24,0) 60%),
+  linear-gradient(to top, rgba(43,42,24,.55) 0%, rgba(43,42,24,.06) 45%, rgba(43,42,24,.1) 100%)}
