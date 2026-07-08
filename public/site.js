@@ -13,6 +13,31 @@
   const menu = document.querySelector('.mobile-menu');
   if (btn && menu) btn.addEventListener('click', () => menu.classList.toggle('open'));
 
+  // sombra del header al hacer scroll
+  const header = document.querySelector('header');
+  if (header) {
+    const onScroll = () => header.classList.toggle('header-scrolled', window.scrollY > 24);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+
+  // fade-in de imágenes que aún no cargaron (nunca deja imágenes invisibles)
+  const bindImgFade = (img) => {
+    if (img.complete) return;
+    img.classList.add('fade-in-img');
+    const done = () => img.classList.add('img-loaded');
+    img.addEventListener('load', done, { once: true });
+    img.addEventListener('error', done, { once: true });
+  };
+  document.querySelectorAll('img').forEach(bindImgFade);
+  new MutationObserver((muts) => {
+    muts.forEach((m) => m.addedNodes.forEach((n) => {
+      if (n.nodeType !== 1) return;
+      if (n.tagName === 'IMG') bindImgFade(n);
+      else if (n.querySelectorAll) n.querySelectorAll('img').forEach(bindImgFade);
+    }));
+  }).observe(document.body, { childList: true, subtree: true });
+
   // instagram feed — marquee infinito, se pausa al hacer hover
   const track = document.querySelector('.ig-track');
   if (track) {

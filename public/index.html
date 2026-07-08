@@ -11,12 +11,12 @@
   <meta property="og:site_name" content="SpiritBeach" />
   <meta property="og:title" content="SpiritBeach — Beachwear sostenible" />
   <meta property="og:description" content="Trajes de baño sostenibles: PET reciclado y 0% de agua. Bikinis, enterizos y salidas de playa. Envíos a toda Venezuela." />
-  <meta property="og:image" content="https://vspirit-redesign.vercel.app/ig/post-7.jpg" />
+  <meta property="og:image" content="https://vspirit-redesign.vercel.app/img/hero-wide.jpg" />
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Montserrat:wght@300;400;500&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/styles.css?v=9" />
+  <link rel="stylesheet" href="/styles.css?v=12" />
 </head>
 <body>
 
@@ -54,7 +54,10 @@
 
   <!-- HERO -->
   <div class="hero">
-    <img src="/ig/post-7.jpg" alt="Bikini rosa SpiritBeach en la playa, piel con arena y sombrero de paja" fetchpriority="high" style="object-position:center 38%" />
+    <picture>
+      <source media="(min-width: 768px)" srcset="/img/hero-wide.jpg" />
+      <img src="/ig/post-7.jpg" alt="Bikini rosa SpiritBeach en la playa, piel con arena y sombrero de paja" fetchpriority="high" />
+    </picture>
     <div class="hero-shade"></div>
     <div class="hero-copy">
       <div class="hero-kicker rv">@vspiritbeach · Beachwear sostenible</div>
@@ -249,7 +252,7 @@
     document.addEventListener('DOMContentLoaded', async () => {
       if (window.SBReady) await window.SBReady;
       const feat = PRODUCTS.filter((p) => p.badge === 'Destacado');
-      const featured = (feat.length ? feat : PRODUCTS).slice(0, 4);
+      const featured = [...feat, ...PRODUCTS.filter((p) => !feat.includes(p) && p.badge !== 'Nuevo')].slice(0, 4);
       const nuevos = PRODUCTS.filter((p) => p.badge === 'Nuevo');
       const resto = PRODUCTS.filter((p) => !featured.includes(p) && !nuevos.includes(p));
       const fresh = [...nuevos, ...resto].slice(0, 4);

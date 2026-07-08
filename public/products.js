@@ -78,10 +78,26 @@ function activeProducts() {
 }
 
 /* ---------- cards ---------- */
+// revelado escalonado de las cards al entrar en pantalla
+const cardObserver = ('IntersectionObserver' in window)
+  ? new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        const el = e.target;
+        const i = el.parentElement ? [...el.parentElement.children].indexOf(el) : 0;
+        el.style.transitionDelay = (Math.min(i % 8, 6) * 70) + 'ms';
+        el.classList.add('in');
+        cardObserver.unobserve(el);
+      });
+    }, { threshold: 0.08 })
+  : null;
+
 function productCard(p) {
   const card = document.createElement('a');
-  card.className = 'prod rv in';
+  card.className = 'prod rv';
   card.href = '/producto?p=' + p.slug;
+  if (cardObserver) queueMicrotask(() => cardObserver.observe(card));
+  else card.classList.add('in');
 
   if (p.badge) {
     const b = document.createElement('span');
